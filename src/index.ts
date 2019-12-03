@@ -52,7 +52,7 @@ const PikaCalc = (
 
     for (let moveIndex in moves) {
       const move = new Move(8, moves[moveIndex].move);
-      if (move.bp <= 0) continue;
+      if (move.bp <= 0 || move.name === 'Detect') continue;
 
       let blankResult = new Calc(attacker, defender, moves[moveIndex]);
       let hpResult = new Calc(attacker, defender, moves[moveIndex], { hp: 252 });
