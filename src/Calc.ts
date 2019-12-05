@@ -1,18 +1,27 @@
 import { calculate } from '../calc/dist/calc';
 import { Pokemon } from '../calc/dist/pokemon';
 import { Move } from '../calc/dist/move';
+import { Result } from '../calc/dist/result';
 
 class Calc {
   private move: Move;
   private attacker: Pokemon;
   private defender: Pokemon;
-  private result;
+  private result: Result;
 
   constructor(
     attacker: string,
     defender: string,
     move: { move: string },
     defenderStats: {
+      hp?: number,
+      atk?: number,
+      def?: number,
+      spa?: number,
+      spdef?: number,
+      spe?: number
+    } = {},
+    attackerStats: {
       hp?: number,
       atk?: number,
       def?: number,
@@ -44,10 +53,14 @@ class Calc {
       evs: defenderStats
     };
 
-    if (this.move.category === 'Physical') {
-      attackerOptions['evs'] = { 'atk': 252 };
-    } else if (this.move.category === 'Special') {
-      attackerOptions['evs'] = { 'spa': 252 };
+    if (Object.keys(attackerStats).length == 0) {
+      if (this.move.category === 'Physical') {
+        attackerOptions['evs'] = { 'atk': 252 };
+      } else if (this.move.category === 'Special') {
+        attackerOptions['evs'] = { 'spa': 252 };
+      }
+    } else {
+      attackerOptions['evs'] = attackerStats;
     }
 
     this.attacker = new Pokemon(
@@ -68,6 +81,18 @@ class Calc {
       this.attacker,
       this.defender,
       this.move);
+  }
+
+  getScore() {
+    return ((this.result.damage.reduce((a, b) => a + b) / this.result.damage.length) / this.result.defender.maxHP()) * 100;
+  }
+
+  isAttackerFirst() {
+    return this.result.attacker.stats.spe > this.result.defender.stats.spe
+  }
+
+  didDefenderDie() {
+    return this.getScore() >= 100
   }
 
   print() {
