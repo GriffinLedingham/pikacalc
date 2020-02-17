@@ -4,19 +4,20 @@ import { Move } from "../damage-calc/calc/dist/move";
 global["Calc"] = Calc;
 global["Move"] = Move;
 
-const UsageData = require("../../pikalytics/server/data_json/2019-10/moveset/ss-1760.json");
+const UsagePath = process.argv[2];
+const UsageData = require(UsagePath);
 
 const defenders = [];
 let monCount = 0;
 for (let i in UsageData) {
-  if (monCount > parseInt(process.argv[3])) break;
+  if (monCount > parseInt(process.argv[4])) break;
   monCount += 1;
   defenders.push(UsageData[i]);
 }
 
 const Genetic = require("genetic-js");
 
-const poke = process.argv[2];
+const poke = process.argv[3];
 
 let attackerUsage = null;
 for (let i in UsageData) {
@@ -185,7 +186,7 @@ genetic.notification = function(pop, generation, stats, isFinished) {
 
 var config = {
   iterations: 4000,
-  size: process.argv[4],
+  size: process.argv[5],
   crossover: 0.3,
   mutation: 0.3,
   skip: 2
