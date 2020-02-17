@@ -1,0 +1,3 @@
+[submodule "damage-calc"]
+	path = damage-calc
+	url = https://github.com/smogon/damage-calc

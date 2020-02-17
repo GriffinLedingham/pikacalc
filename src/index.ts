@@ -1,7 +1,9 @@
-const UsageData = require('../../pikalytics/server/data_json/2019-10/moveset/ss-1760.json');
+const args = process.argv;
 
-import { Move } from '../calc/dist/move';
-import Calc from './Calc';
+let UsageData = null;
+
+import { Move } from "../damage-calc/calc/dist/move";
+import Calc from "./Calc";
 
 const runningAsScript = !module.parent;
 
@@ -15,14 +17,14 @@ const PikaCalc = (
     // Move name
     [key: string]: {
       // Move results
-      blankResult: { [key: string]: any },
-      hpResult: { [key: string]: any },
-      defResult: { [key: string]: any },
-      hpDefResult: { [key: string]: any },
-    }
-  }
+      blankResult: { [key: string]: any };
+      hpResult: { [key: string]: any };
+      defResult: { [key: string]: any };
+      hpDefResult: { [key: string]: any };
+    };
+  };
 } => {
-  if (typeof defenders === 'string') defenders = [defenders];
+  if (typeof defenders === "string") defenders = [defenders];
 
   if (defenders === undefined || defenders === null) {
     defenders = [];
@@ -48,39 +50,58 @@ const PikaCalc = (
     const defender = defenders[defenderIndex];
 
     let moves = MonUsage.moves;
-    if (inputMove !== null && inputMove !== undefined) moves = [{ move: inputMove }];
+    if (inputMove !== null && inputMove !== undefined)
+      moves = [{ move: inputMove }];
 
     for (let moveIndex in moves) {
       const move = new Move(8, moves[moveIndex].move);
-      if (move.bp <= 0 || move.name === 'Detect') continue;
+      if (move.bp <= 0 || move.name === "Detect" || move.name === "Other")
+        continue;
 
       let blankResult = new Calc(attacker, defender, moves[moveIndex]);
-      let hpResult = new Calc(attacker, defender, moves[moveIndex], { hp: 252 });
+      let hpResult = new Calc(attacker, defender, moves[moveIndex], {
+        hp: 252
+      });
 
       var defResult = null;
-      if (move.category === 'Physical') {
-        defResult = new Calc(attacker, defender, moves[moveIndex], { def: 252 });
-      } else if (move.category === 'Special') {
-        defResult = new Calc(attacker, defender, moves[moveIndex], { spdef: 252 });
+      if (move.category === "Physical") {
+        defResult = new Calc(attacker, defender, moves[moveIndex], {
+          def: 252
+        });
+      } else if (move.category === "Special") {
+        defResult = new Calc(attacker, defender, moves[moveIndex], {
+          spdef: 252
+        });
       }
 
       var hpDefResult = null;
-      if (move.category === 'Physical') {
-        hpDefResult = new Calc(attacker, defender, moves[moveIndex], { hp: 252, def: 252 });
-      } else if (move.category === 'Special') {
-        hpDefResult = new Calc(attacker, defender, moves[moveIndex], { hp: 252, spdef: 252 });
+      if (move.category === "Physical") {
+        hpDefResult = new Calc(attacker, defender, moves[moveIndex], {
+          hp: 252,
+          def: 252
+        });
+      } else if (move.category === "Special") {
+        hpDefResult = new Calc(attacker, defender, moves[moveIndex], {
+          hp: 252,
+          spdef: 252
+        });
       }
 
       if (runningAsScript) {
         console.log(`--- ${move.name} -------------`);
-        if (blankResult !== null) blankResult.print()
-        if (hpResult !== null) hpResult.print()
-        if (defResult !== null) defResult.print()
-        if (hpDefResult !== null) hpDefResult.print()
+        if (blankResult !== null) blankResult.print();
+        if (hpResult !== null) hpResult.print();
+        if (defResult !== null) defResult.print();
+        if (hpDefResult !== null) hpDefResult.print();
       }
 
       if (!results.hasOwnProperty(defender)) results[defender] = {};
-      results[defender][move.name] = { blankResult, hpResult, defResult, hpDefResult };
+      results[defender][move.name] = {
+        blankResult,
+        hpResult,
+        defResult,
+        hpDefResult
+      };
     }
   }
 
@@ -89,6 +110,11 @@ const PikaCalc = (
 
 if (runningAsScript) {
   process.argv.shift();
+  process.argv.shift();
+
+  const UsagePath = process.argv[0];
+  UsageData = require(UsagePath);
+
   process.argv.shift();
   const attacker = process.argv[0];
   process.argv.shift();
@@ -102,9 +128,9 @@ if (runningAsScript) {
 
   let inputMove = null;
   if (process.argv.length > 0) {
-    inputMove = process.argv.join(' ');
+    inputMove = process.argv.join(" ");
   }
   PikaCalc(attacker, defenders, inputMove);
 }
 
-export { PikaCalc }
+export { PikaCalc };
