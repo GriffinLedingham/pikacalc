@@ -10,6 +10,7 @@
     "tsc": "./node_modules/typescript/bin/tsc",
     "test": "tsc && mocha dist/**/*.spec.js -C --exit",
     "docker": "docker build -t socks . && docker run -p 3000:3000 -p 3001:3001 socks node dist",
+    "calc": "node dist/index.js",
     "setup": "yarn install && git submodule update --init && cd damage-calc/calc && yarn install && yarn compile || cd ../../ && yarn run tsc"
 
   },
