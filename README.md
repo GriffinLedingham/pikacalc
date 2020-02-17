@@ -6,6 +6,8 @@ Calculate Pokemon Sword and Shield VGC metagame matchups via CLI with pikacalc. 
 
 `yarn setup`
 
+(The compile step in the damage-calc submodule will actually fail, but don't worry, our script's setup still worked)
+
 ## Usage
 
 `yarn calc <Absolute Filepath to usage .json> <Attacker> <Defender> [Move Name]`
